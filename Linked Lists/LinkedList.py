@@ -86,6 +86,32 @@ class LinkedList:
         self.length += 1
         return True
 
+    '''
+    Removes the first node from the list and returns it
+    Time Complexity: O(1) as the number of operations to remove the first node
+                     from the list will always remain the same.
+    Steps:
+        1. If the list is empty return None
+        2. If the list has only one node set the head and tail to None,
+           decrement the length and return the node.
+        3. Set the head to the next node, decrement the length and return
+           the first node.
+    '''
+    def pop_first(self):
+        if self.length == 0 or self.head is None:
+            return None
+        elif self.length == 1:
+            temp = self.head
+            self.head    = None
+            self.tail    = None
+            self.length -= 1
+            temp.next    = None
+            return temp
+        temp         = self.head
+        self.head    = self.head.next
+        temp.next    = None
+        self.length -= 1
+        return temp
 
 
 
@@ -100,7 +126,6 @@ while item is not None:
     print(f'Value popped is: {item.value}')
     print('Linked list after pop operation: ', end="")
     my_ll.traverse()
-
     item = my_ll.pop()
 print('Linked list is now empty')
 my_ll.prepend(1)
@@ -111,3 +136,10 @@ my_ll.prepend(-1)
 my_ll.traverse()
 my_ll.append(2)
 my_ll.traverse()
+item = my_ll.pop_first()
+while item is not None:
+    print(f'Value of first node was: {item.value}')
+    print('Linked list after popping first node: ', end='')
+    my_ll.traverse()
+    item = my_ll.pop_first()
+print('Linked list is now empty')
