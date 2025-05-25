@@ -1,5 +1,3 @@
-from wsgiref.validate import header_re
-
 from Node import Node
 
 
@@ -75,7 +73,7 @@ class LinkedList:
         2. Set new_node.next = head
         3. Set head as new_node
     '''
-    def prepend(self, value):
+    def prepend(self, value) -> bool:
         new_node = Node(value)
         if self.length == 0 or self.head is None:
             self.head = new_node
@@ -113,33 +111,100 @@ class LinkedList:
         self.length -= 1
         return temp
 
+    '''
+    Retrieves the node at the specified index.
+    Time Complexity: o(n) as we would have to iterate over the list each time to
+                     retrieve the node at the given index.
+    Steps:
+        1. If index is < 0 or index > length of the index return None
+        2. Iterate over the list to retrieve the node at the given index
+    '''
+    def get(self, index):
+        if index < 0 or index >= self.length:
+            return None
+        temp = self.head
+        for _ in range(index):
+            temp = temp.next
+        return temp
 
+    '''
+    Sets the value of the node at the specified index with the given value.
+    Time Complexity: O(n) as the number of operations performed depends on the index
+                     at which the value is being set.
+    Steps:
+        1. If index < 0 or index >= length of the list, return None
+        2. Loop over the lists till the node at given index is reached and set the value.  
+    '''
+    def set_value(self, index: int, value: any) -> any:
+        temp = self.get(index)
+        if temp:
+            temp.value = value
+            return True
+        return False
 
-my_ll = LinkedList(1)
-my_ll.append(2)
-my_ll.append(3)
-my_ll.append(4)
-my_ll.append(5)
-my_ll.traverse()
-item = my_ll.pop()
-while item is not None:
-    print(f'Value popped is: {item.value}')
-    print('Linked list after pop operation: ', end="")
-    my_ll.traverse()
-    item = my_ll.pop()
-print('Linked list is now empty')
-my_ll.prepend(1)
-my_ll.traverse()
-my_ll.prepend(0)
-my_ll.traverse()
-my_ll.prepend(-1)
-my_ll.traverse()
-my_ll.append(2)
-my_ll.traverse()
-item = my_ll.pop_first()
-while item is not None:
-    print(f'Value of first node was: {item.value}')
-    print('Linked list after popping first node: ', end='')
-    my_ll.traverse()
-    item = my_ll.pop_first()
-print('Linked list is now empty')
+    '''
+    Creates a new node with the given value at the specified index.
+    Time Complexity: O(n) as the number of operations depends on the
+                     index at which the new node is being inserted.
+    Steps:
+        1. Check if the index is valid. Return False if an invalid index is given.
+        2. If the new node is being inserted at the head, use the prepend method.
+        3. If the new node is being inserted at the tail, use the append method.
+        4. Else retrieve the node at index - 1, point the new node to the existing nodes next.
+        5. Point the existing node to the new node, increment the length by 1 and return True.
+    '''
+    def insert(self, index: int, value: any) -> bool:
+        if index < 0 or index > self.length:
+            return False
+        elif index == 0:
+            return self.prepend(value)
+        elif index == self.length:
+            return self.prepend(value)
+        else:
+            new_node  = Node(value)
+            temp_node = self.get(index - 1)
+            new_node.next = temp_node.next
+            temp_node.next = new_node
+            self.length += 1
+            return True
+
+    '''
+    Removes the node at the given index and returns it.
+    Time Complexity: O(n) as the number of operations depends on the index from 
+                     which the node is being removed.
+    Steps:
+        1. If the index < 0 or index >= self.length, return False
+        2. If the index == 0, use the pop_first method to delete the head
+        3. If the index == self.length - 1, use the pop method to delete the tail.
+        4. Else retrieve the node at index - 1 and index.
+        5. Point the node at index - 1 to index.next.
+        6. Point the node at index to None
+        7. Decrement the length and return the node
+    '''
+    def remove(self, index: int) -> any([Node, bool]):
+        if index < 0 or index >= self.length:
+            return None
+        elif index == 0:
+            return self.pop_first()
+        elif index ==  self.length - 1:
+            return self.pop()
+        else:
+            pre       = self.get(index - 1)
+            curr      = pre.next
+            pre.next  = curr.next
+            curr.next = None
+            self.length -= 1
+            return curr
+
+    def reverse(self):
+        temp      = self.head
+        self.head = self.tail
+        self.tail = temp
+        pre       = None
+        after     = temp.next
+        for _ in range(self.length):
+            after     = temp.next
+            temp.next = pre
+            pre       = temp
+            temp      = after
+
